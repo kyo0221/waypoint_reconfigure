@@ -2,6 +2,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <yaml-cpp/yaml.h>
+
 #include "waypoint_reconfigure/visibility_control.h"
 
 namespace waypoint_reconfigure{
@@ -22,6 +24,12 @@ public:
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr param_change_srv_;
 
   std::shared_ptr<rclcpp::AsyncParametersClient> param_client_;
+
+private:
+  const double global_inflation_radius;
+  const double global_cost_scaling_factor;
+  const double local_inflation_radius;
+  const double local_cost_scaling_factor;
 };
 
 }

@@ -1,0 +1,9 @@
+waypoint_reconfigure_node:
+  ros__parameters:
+  # global_costmap
+    global_inflation_radius: 0.3
+    global_cost_scaling_factor : 1.0
+  # local_costmap
+    local_inflation_radius: 0.3
+    local_cost_scaling_factor: 1.0
+
