@@ -10,19 +10,22 @@ WaypointReconfigureNode::WaypointReconfigureNode(const std::string& name_space, 
 : rclcpp::Node("waypoint_reconfigure_node", name_space, options)
 {
     param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "global_costmap/global_costmap");
-    param_change_srv_ = this->create_service<std_srvs::srv::Trigger>(
+    param_override_srv_ = this->create_service<std_srvs::srv::Trigger>(
         "param_override", std::bind(&WaypointReconfigureNode::param_override, this, std::placeholders::_1, std::placeholders::_2));
+
+    param_reset_srv_ = this->create_service<std_srvs::srv::Trigger>(
+        "param_reset", std::bind(&WaypointReconfigureNode::param_reset, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void WaypointReconfigureNode::param_override(
     const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
     const std::shared_ptr<std_srvs::srv::Trigger::Response> response)
 {
-    RCLCPP_INFO(this->get_logger(), "param_override");
+    RCLCPP_INFO(this->get_logger(), "params_override");
 
     try{
-        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.inflation_radius", 0.24)});
-        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.cost_scaling_factor", 0.23)});
+        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.inflation_radius", global_inflation_radius)});
+        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.cost_scaling_factor", global_cost_scaling_factor)});
 
         response->success = true;
         response->message = "success";
@@ -31,8 +34,25 @@ void WaypointReconfigureNode::param_override(
         response->success = false;
         response->message = "param override false";
     }
+}
 
+void WaypointReconfigureNode::param_reset(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+    const std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+{
+    RCLCPP_INFO(this->get_logger(), "params_reset");
 
+    try{
+        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.inflation_radius", prev_global_inflation_radius)});
+        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.cost_scaling_factor", prev_global_cost_scaling_factor)});
+
+        response->success = true;
+        response->message = "success";
+    }catch(const std::exception& e){
+        
+        response->success = false;
+        response->message = "param reset false";
+    }
 }
 
 bool WaypointReconfigureNode::read_yaml()
@@ -46,7 +66,6 @@ bool WaypointReconfigureNode::read_yaml()
         global_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["global_cost_scaling_factor"].as<double>();
         local_inflation_radius = yaml_config["waypoint_reconfigure"]["local_inflation_radius"].as<double>();
         local_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["local_cost_scaling_factor"].as<double>();
-
 
         prev_global_inflation_radius = yaml_config["waypoint_reconfigure"]["prev_global_inflation_radius"].as<double>();
         prev_global_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["prev_global_cost_scaling_factor"].as<double>();

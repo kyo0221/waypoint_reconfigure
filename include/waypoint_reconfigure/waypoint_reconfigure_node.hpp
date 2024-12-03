@@ -23,10 +23,14 @@ public:
     const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
     const std::shared_ptr<std_srvs::srv::Trigger::Response> response
   );
-
+  void param_reset(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+    const std::shared_ptr<std_srvs::srv::Trigger::Response> response
+  );
   bool read_yaml();
 
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr param_change_srv_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr param_override_srv_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr param_reset_srv_;
 
   std::shared_ptr<rclcpp::AsyncParametersClient> param_client_;
 
