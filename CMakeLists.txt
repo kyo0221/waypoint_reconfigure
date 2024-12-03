@@ -14,6 +14,8 @@ ament_auto_add_executable(waypoint_reconfigure
   src/waypoint_reconfigure_node.cpp
 )
 
+target_link_libraries(waypoint_reconfigure  yaml-cpp)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
@@ -43,4 +45,6 @@ install(
 
 ament_auto_package(
   INSTALL_TO_SHARE
+  config
+  launch
 )
