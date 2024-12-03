@@ -10,6 +10,8 @@
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>string</depend>
+  <depend>exception</depend>
   <depend>std_srvs</depend>
   <depend>yaml-cpp</depend>
 

@@ -15,7 +15,6 @@ def generate_launch_description():
         package = 'waypoint_reconfigure',
         namespace = 'waypoint_reconfigure_node',
         executable = 'waypoint_reconfigure',
-        parameters = [config_file_path],
         output = 'screen'
     )
 
