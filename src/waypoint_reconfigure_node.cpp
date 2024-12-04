@@ -58,7 +58,7 @@ void WaypointReconfigureNode::param_reset(
 bool WaypointReconfigureNode::read_yaml()
 {
     try{
-        std::string yaml_pass = ament_index_cpp::get_package_share_directory("waypoint_reconfigure")+"/config/"+"nav2_params_override"+".yaml";
+        std::string yaml_pass = ament_index_cpp::get_package_share_directory("orne_box_navigation_executor")+"/config/"+"params/"+"nav2_params_override"+".yaml";
         RCLCPP_INFO(this->get_logger(), "yaml pass : %s", yaml_pass.c_str());
         YAML::Node yaml_config = YAML::LoadFile(yaml_pass);
 
