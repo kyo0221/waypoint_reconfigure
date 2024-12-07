@@ -35,15 +35,17 @@ public:
   std::shared_ptr<rclcpp::AsyncParametersClient> param_client_;
 
 private:
-  double global_inflation_radius;
-  double global_cost_scaling_factor;
-  double local_inflation_radius;
-  double local_cost_scaling_factor;
+  // double global_inflation_radius;
+  // double global_cost_scaling_factor;
+  // double local_inflation_radius;
+  // double local_cost_scaling_factor;
+  double max_vel_x;
 
-  double prev_global_inflation_radius;
-  double prev_global_cost_scaling_factor;
-  double prev_local_inflation_radius;
-  double prev_local_cost_scaling_factor;
+  // double prev_global_inflation_radius;
+  // double prev_global_cost_scaling_factor;
+  // double prev_local_inflation_radius;
+  // double prev_local_cost_scaling_factor;
+  double prev_max_vel_x;
 };
 
 }

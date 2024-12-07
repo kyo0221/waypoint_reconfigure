@@ -9,7 +9,7 @@ WaypointReconfigureNode::WaypointReconfigureNode(const rclcpp::NodeOptions& opti
 WaypointReconfigureNode::WaypointReconfigureNode(const std::string& name_space, const rclcpp::NodeOptions& options)
 : rclcpp::Node("waypoint_reconfigure_node", name_space, options)
 {
-    param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "global_costmap/global_costmap");
+    param_client_ = std::make_shared<rclcpp::AsyncParametersClient>(this, "controller_server/follow_path");
     param_override_srv_ = this->create_service<std_srvs::srv::Trigger>(
         "param_override", std::bind(&WaypointReconfigureNode::param_override, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -24,8 +24,7 @@ void WaypointReconfigureNode::param_override(
     RCLCPP_INFO(this->get_logger(), "params_override");
 
     try{
-        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.inflation_radius", global_inflation_radius)});
-        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.cost_scaling_factor", global_cost_scaling_factor)});
+        param_client_->set_parameters({rclcpp::Parameter("max_vel_x", max_vel_x)});
 
         response->success = true;
         response->message = "success";
@@ -43,8 +42,7 @@ void WaypointReconfigureNode::param_reset(
     RCLCPP_INFO(this->get_logger(), "params_reset");
 
     try{
-        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.inflation_radius", prev_global_inflation_radius)});
-        param_client_->set_parameters({rclcpp::Parameter("inflation_layer.cost_scaling_factor", prev_global_cost_scaling_factor)});
+        param_client_->set_parameters({rclcpp::Parameter("max_vel_x", prev_max_vel_x)});
 
         response->success = true;
         response->message = "success";
@@ -62,15 +60,17 @@ bool WaypointReconfigureNode::read_yaml()
         RCLCPP_INFO(this->get_logger(), "yaml pass : %s", yaml_pass.c_str());
         YAML::Node yaml_config = YAML::LoadFile(yaml_pass);
 
-        global_inflation_radius = yaml_config["waypoint_reconfigure"]["global_inflation_radius"].as<double>();
-        global_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["global_cost_scaling_factor"].as<double>();
-        local_inflation_radius = yaml_config["waypoint_reconfigure"]["local_inflation_radius"].as<double>();
-        local_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["local_cost_scaling_factor"].as<double>();
+        max_vel_x = yaml_config["waypoint_reconfigure"]["max_vel_x"].as<double>();
+        // global_inflation_radius = yaml_config["waypoint_reconfigure"]["global_inflation_radius"].as<double>();
+        // global_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["global_cost_scaling_factor"].as<double>();
+        // local_inflation_radius = yaml_config["waypoint_reconfigure"]["local_inflation_radius"].as<double>();
+        // local_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["local_cost_scaling_factor"].as<double>(); 
 
-        prev_global_inflation_radius = yaml_config["waypoint_reconfigure"]["prev_global_inflation_radius"].as<double>();
-        prev_global_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["prev_global_cost_scaling_factor"].as<double>();
-        prev_local_inflation_radius = yaml_config["waypoint_reconfigure"]["prev_local_inflation_radius"].as<double>();
-        prev_local_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["prev_local_cost_scaling_factor"].as<double>();
+        prev_max_vel_x = yaml_config["waypoint_reconfigure"]["prev_max_vel_x"].as<double>();
+        // prev_global_inflation_radius = yaml_config["waypoint_reconfigure"]["prev_global_inflation_radius"].as<double>();
+        // prev_global_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["prev_global_cost_scaling_factor"].as<double>();
+        // prev_local_inflation_radius = yaml_config["waypoint_reconfigure"]["prev_local_inflation_radius"].as<double>();
+        // prev_local_cost_scaling_factor = yaml_config["waypoint_reconfigure"]["prev_local_cost_scaling_factor"].as<double>();
 
         return true;
     }catch(const std::exception& e){
